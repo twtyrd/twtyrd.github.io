@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Linux下以普通用户安装FastDFS.md</title>
+    <url>/2019/10/13/Linux%E4%B8%8B%E4%BB%A5%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%E5%AE%89%E8%A3%85FastDFS/</url>
+    <content><![CDATA[<h2 id="获取安装包"><a href="#获取安装包" class="headerlink" title="获取安装包"></a>获取安装包</h2><p>FastDFS：<a href="https://github.com/happyfish100/fastdfs/releases" target="_blank" rel="noopener">https://github.com/happyfish100/fastdfs/releases</a></p>
+<p>libfastcommon：<a href="https://github.com/happyfish100/libfastcommon/releases" target="_blank" rel="noopener">https://github.com/happyfish100/libfastcommon/releases</a></p>
+<p>本文将以<code>fastdfs-5.12.tar.gz</code>和<code>libfastcommon-1.0.40.tar.gz</code>进行安装实践</p>
+<a id="more"></a>
+
+<h2 id="安装libfastcommon"><a href="#安装libfastcommon" class="headerlink" title="安装libfastcommon"></a>安装libfastcommon</h2><h3 id="创建安装目录"><a href="#创建安装目录" class="headerlink" title="创建安装目录"></a>创建安装目录</h3><p><code>mkdir -pv $HOME/fastdfs</code></p>
+<h3 id="解压安装包"><a href="#解压安装包" class="headerlink" title="解压安装包"></a>解压安装包</h3><p><code>tar -zxvf libfastcommon-1.0.40.tar.gz</code></p>
+<h3 id="设置环境变量，用于指定安装目录"><a href="#设置环境变量，用于指定安装目录" class="headerlink" title="设置环境变量，用于指定安装目录"></a>设置环境变量，用于指定安装目录</h3><p><code>export DESTDIR=$HOME/fastdfs</code></p>
+<h3 id="依次执行以下命令，完成安装"><a href="#依次执行以下命令，完成安装" class="headerlink" title="依次执行以下命令，完成安装"></a>依次执行以下命令，完成安装</h3><p><code>cd libfastcommon-1.0.40</code></p>
+<p><code>./make.sh</code></p>
+<p><code>./make.sh install</code></p>
+<h3 id="在-profile文件中添加以下环境变量"><a href="#在-profile文件中添加以下环境变量" class="headerlink" title="在~/.profile文件中添加以下环境变量"></a>在<code>~/.profile</code>文件中添加以下环境变量</h3><p><code>export LD_LIBRARY_PATH=$HOME/fastdfs/usr/lib64:$LD_LIBRARY_PATH</code></p>
+<p><code>source .profile</code></p>
+<h2 id="安装FastDFS"><a href="#安装FastDFS" class="headerlink" title="安装FastDFS"></a>安装FastDFS</h2><h3 id="解压安装包tar-zxvf-fastdfs-5-12-tar-gz"><a href="#解压安装包tar-zxvf-fastdfs-5-12-tar-gz" class="headerlink" title="解压安装包tar -zxvf fastdfs-5.12.tar.gz"></a>解压安装包<code>tar -zxvf fastdfs-5.12.tar.gz</code></h3><h3 id="进入解压后的目录cd-fastdfs-5-12"><a href="#进入解压后的目录cd-fastdfs-5-12" class="headerlink" title="进入解压后的目录cd fastdfs-5.12"></a>进入解压后的目录<code>cd fastdfs-5.12</code></h3><h3 id="修改make-sh文件，指定配置文件存放目录"><a href="#修改make-sh文件，指定配置文件存放目录" class="headerlink" title="修改make.sh文件，指定配置文件存放目录"></a>修改<code>make.sh</code>文件，指定配置文件存放目录</h3><p>修改以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [ ! -d /etc/fdfs ]; <span class="keyword">then</span></span><br><span class="line">  mkdir -p /etc/fdfs</span><br></pre></td></tr></table></figure>
+
+<p>为：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [ ! -d <span class="variable">$TARGET_CONF_PATH</span> ]; <span class="keyword">then</span></span><br><span class="line">        mkdir -p <span class="variable">$TARGET_CONF_PATH</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="修改tracker目录下的Makefile-in文件，指定库路径"><a href="#修改tracker目录下的Makefile-in文件，指定库路径" class="headerlink" title="修改tracker目录下的Makefile.in文件，指定库路径"></a>修改<code>tracker</code>目录下的<code>Makefile.in</code>文件，指定库路径</h3><p>修改以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">INC_PATH = -I../common -I/usr/<span class="built_in">local</span>/include</span><br><span class="line">LIB_PATH = $(LIBS) -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<p>为：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">INC_PATH = -I../common -I<span class="variable">$&#123;DESTDIR&#125;</span>/usr/include</span><br><span class="line">LIB_PATH = $(LIBS) -L<span class="variable">$&#123;DESTDIR&#125;</span>/usr/lib64 -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<h3 id="同tracker，完成storage-和-client目录下的Makefile-in文件修改"><a href="#同tracker，完成storage-和-client目录下的Makefile-in文件修改" class="headerlink" title="同tracker，完成storage``和``client目录下的Makefile.in文件修改"></a>同<code>tracker</code>，完成<code>storage``和``client</code>目录下的<code>Makefile.in</code>文件修改</h3><p>修改<code>storage/Makefile.in</code>以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">INC_PATH = -I. -Itrunk_mgr -I../common -I../tracker -I../client -Ifdht_client -I/usr/include/fastcommon</span><br><span class="line">LIB_PATH = $(LIBS)  -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<p>为：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">INC_PATH = -I. -Itrunk_mgr -I../common -I../tracker -I../client -Ifdht_client -I<span class="variable">$&#123;DESTDIR&#125;</span>/usr/include</span><br><span class="line">LIB_PATH = $(LIBS)  -L<span class="variable">$&#123;DESTDIR&#125;</span>/usr/lib64 -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<p>修改<code>client/Makefile.in</code>以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">INC_PATH = -I../common -I../tracker -I/usr/include/fastcommon</span><br><span class="line">LIB_PATH = $(LIBS) -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<p>为：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">INC_PATH = -I../common -I../tracker -I<span class="variable">$&#123;DESTDIR&#125;</span>/usr/include</span><br><span class="line">LIB_PATH = $(LIBS) -L<span class="variable">$&#123;DESTDIR&#125;</span>/usr/lib64 -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h3><p><code>./make.sh</code></p>
+<p><code>./make.sh install</code></p>
+]]></content>
+      <categories>
+        <category>FastDFS</category>
+      </categories>
+      <tags>
+        <tag>FastDFS</tag>
+      </tags>
+  </entry>
+</search>

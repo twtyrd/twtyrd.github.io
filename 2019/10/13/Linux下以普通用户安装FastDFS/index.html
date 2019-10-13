@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="获取安装包FastDFS：https://github.com/happyfish100/fastdfs/releases libfastcommon：https://github.com/happyfish100/libfastcommon/releases 本文将以fastdfs-5.12.tar.gz和libfastcommon-1.0.40.tar.gz进行安装实践">
+<meta name="keywords" content="FastDFS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下以普通用户安装FastDFS.md">
+<meta property="og:url" content="http://yoursite.com/2019/10/13/Linux下以普通用户安装FastDFS/index.html">
+<meta property="og:site_name" content="Twtyrd">
+<meta property="og:description" content="获取安装包FastDFS：https://github.com/happyfish100/fastdfs/releases libfastcommon：https://github.com/happyfish100/libfastcommon/releases 本文将以fastdfs-5.12.tar.gz和libfastcommon-1.0.40.tar.gz进行安装实践">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-13T01:38:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux下以普通用户安装FastDFS.md">
+<meta name="twitter:description" content="获取安装包FastDFS：https://github.com/happyfish100/fastdfs/releases libfastcommon：https://github.com/happyfish100/libfastcommon/releases 本文将以fastdfs-5.12.tar.gz和libfastcommon-1.0.40.tar.gz进行安装实践">
+  <link rel="canonical" href="http://yoursite.com/2019/10/13/Linux下以普通用户安装FastDFS/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Linux下以普通用户安装FastDFS.md | Twtyrd</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Twtyrd</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+    
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>
+        
+        搜索
+        </a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/13/Linux下以普通用户安装FastDFS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Twtyrd">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Twtyrd">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Linux下以普通用户安装FastDFS.md
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-13 09:38:36" itemprop="dateCreated datePublished" datetime="2019-10-13T09:38:36+08:00">2019-10-13</time>
+            </span>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/FastDFS/" itemprop="url" rel="index">
+                    <span itemprop="name">FastDFS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="获取安装包"><a href="#获取安装包" class="headerlink" title="获取安装包"></a>获取安装包</h2><p>FastDFS：<a href="https://github.com/happyfish100/fastdfs/releases" target="_blank" rel="noopener">https://github.com/happyfish100/fastdfs/releases</a></p>
+<p>libfastcommon：<a href="https://github.com/happyfish100/libfastcommon/releases" target="_blank" rel="noopener">https://github.com/happyfish100/libfastcommon/releases</a></p>
+<p>本文将以<code>fastdfs-5.12.tar.gz</code>和<code>libfastcommon-1.0.40.tar.gz</code>进行安装实践</p>
+<a id="more"></a>
+
+<h2 id="安装libfastcommon"><a href="#安装libfastcommon" class="headerlink" title="安装libfastcommon"></a>安装libfastcommon</h2><h3 id="创建安装目录"><a href="#创建安装目录" class="headerlink" title="创建安装目录"></a>创建安装目录</h3><p><code>mkdir -pv $HOME/fastdfs</code></p>
+<h3 id="解压安装包"><a href="#解压安装包" class="headerlink" title="解压安装包"></a>解压安装包</h3><p><code>tar -zxvf libfastcommon-1.0.40.tar.gz</code></p>
+<h3 id="设置环境变量，用于指定安装目录"><a href="#设置环境变量，用于指定安装目录" class="headerlink" title="设置环境变量，用于指定安装目录"></a>设置环境变量，用于指定安装目录</h3><p><code>export DESTDIR=$HOME/fastdfs</code></p>
+<h3 id="依次执行以下命令，完成安装"><a href="#依次执行以下命令，完成安装" class="headerlink" title="依次执行以下命令，完成安装"></a>依次执行以下命令，完成安装</h3><p><code>cd libfastcommon-1.0.40</code></p>
+<p><code>./make.sh</code></p>
+<p><code>./make.sh install</code></p>
+<h3 id="在-profile文件中添加以下环境变量"><a href="#在-profile文件中添加以下环境变量" class="headerlink" title="在~/.profile文件中添加以下环境变量"></a>在<code>~/.profile</code>文件中添加以下环境变量</h3><p><code>export LD_LIBRARY_PATH=$HOME/fastdfs/usr/lib64:$LD_LIBRARY_PATH</code></p>
+<p><code>source .profile</code></p>
+<h2 id="安装FastDFS"><a href="#安装FastDFS" class="headerlink" title="安装FastDFS"></a>安装FastDFS</h2><h3 id="解压安装包tar-zxvf-fastdfs-5-12-tar-gz"><a href="#解压安装包tar-zxvf-fastdfs-5-12-tar-gz" class="headerlink" title="解压安装包tar -zxvf fastdfs-5.12.tar.gz"></a>解压安装包<code>tar -zxvf fastdfs-5.12.tar.gz</code></h3><h3 id="进入解压后的目录cd-fastdfs-5-12"><a href="#进入解压后的目录cd-fastdfs-5-12" class="headerlink" title="进入解压后的目录cd fastdfs-5.12"></a>进入解压后的目录<code>cd fastdfs-5.12</code></h3><h3 id="修改make-sh文件，指定配置文件存放目录"><a href="#修改make-sh文件，指定配置文件存放目录" class="headerlink" title="修改make.sh文件，指定配置文件存放目录"></a>修改<code>make.sh</code>文件，指定配置文件存放目录</h3><p>修改以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ ! -d /etc/fdfs ]; <span class="keyword">then</span></span><br><span class="line">  mkdir -p /etc/fdfs</span><br></pre></td></tr></table></figure>
+
+<p>为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ ! -d <span class="variable">$TARGET_CONF_PATH</span> ]; <span class="keyword">then</span></span><br><span class="line">        mkdir -p <span class="variable">$TARGET_CONF_PATH</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="修改tracker目录下的Makefile-in文件，指定库路径"><a href="#修改tracker目录下的Makefile-in文件，指定库路径" class="headerlink" title="修改tracker目录下的Makefile.in文件，指定库路径"></a>修改<code>tracker</code>目录下的<code>Makefile.in</code>文件，指定库路径</h3><p>修改以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INC_PATH = -I../common -I/usr/<span class="built_in">local</span>/include</span><br><span class="line">LIB_PATH = $(LIBS) -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<p>为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INC_PATH = -I../common -I<span class="variable">$&#123;DESTDIR&#125;</span>/usr/include</span><br><span class="line">LIB_PATH = $(LIBS) -L<span class="variable">$&#123;DESTDIR&#125;</span>/usr/lib64 -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<h3 id="同tracker，完成storage-和-client目录下的Makefile-in文件修改"><a href="#同tracker，完成storage-和-client目录下的Makefile-in文件修改" class="headerlink" title="同tracker，完成storage``和``client目录下的Makefile.in文件修改"></a>同<code>tracker</code>，完成<code>storage``和``client</code>目录下的<code>Makefile.in</code>文件修改</h3><p>修改<code>storage/Makefile.in</code>以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INC_PATH = -I. -Itrunk_mgr -I../common -I../tracker -I../client -Ifdht_client -I/usr/include/fastcommon</span><br><span class="line">LIB_PATH = $(LIBS)  -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<p>为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INC_PATH = -I. -Itrunk_mgr -I../common -I../tracker -I../client -Ifdht_client -I<span class="variable">$&#123;DESTDIR&#125;</span>/usr/include</span><br><span class="line">LIB_PATH = $(LIBS)  -L<span class="variable">$&#123;DESTDIR&#125;</span>/usr/lib64 -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<p>修改<code>client/Makefile.in</code>以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INC_PATH = -I../common -I../tracker -I/usr/include/fastcommon</span><br><span class="line">LIB_PATH = $(LIBS) -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<p>为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INC_PATH = -I../common -I../tracker -I<span class="variable">$&#123;DESTDIR&#125;</span>/usr/include</span><br><span class="line">LIB_PATH = $(LIBS) -L<span class="variable">$&#123;DESTDIR&#125;</span>/usr/lib64 -lfastcommon</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h3><p><code>./make.sh</code></p>
+<p><code>./make.sh install</code></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/FastDFS/" rel="tag"># FastDFS</a>
+            
+          </div>
+        
+
+        
+
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取安装包"><span class="nav-number">1.</span> <span class="nav-text">获取安装包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装libfastcommon"><span class="nav-number">2.</span> <span class="nav-text">安装libfastcommon</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建安装目录"><span class="nav-number">2.1.</span> <span class="nav-text">创建安装目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解压安装包"><span class="nav-number">2.2.</span> <span class="nav-text">解压安装包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置环境变量，用于指定安装目录"><span class="nav-number">2.3.</span> <span class="nav-text">设置环境变量，用于指定安装目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#依次执行以下命令，完成安装"><span class="nav-number">2.4.</span> <span class="nav-text">依次执行以下命令，完成安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在-profile文件中添加以下环境变量"><span class="nav-number">2.5.</span> <span class="nav-text">在~/.profile文件中添加以下环境变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装FastDFS"><span class="nav-number">3.</span> <span class="nav-text">安装FastDFS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解压安装包tar-zxvf-fastdfs-5-12-tar-gz"><span class="nav-number">3.1.</span> <span class="nav-text">解压安装包tar -zxvf fastdfs-5.12.tar.gz</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进入解压后的目录cd-fastdfs-5-12"><span class="nav-number">3.2.</span> <span class="nav-text">进入解压后的目录cd fastdfs-5.12</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改make-sh文件，指定配置文件存放目录"><span class="nav-number">3.3.</span> <span class="nav-text">修改make.sh文件，指定配置文件存放目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改tracker目录下的Makefile-in文件，指定库路径"><span class="nav-number">3.4.</span> <span class="nav-text">修改tracker目录下的Makefile.in文件，指定库路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同tracker，完成storage-和-client目录下的Makefile-in文件修改"><span class="nav-number">3.5.</span> <span class="nav-text">同tracker，完成storage``和``client目录下的Makefile.in文件修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译安装"><span class="nav-number">3.6.</span> <span class="nav-text">编译安装</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Twtyrd</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Twtyrd</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.4.1
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.4.1"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
